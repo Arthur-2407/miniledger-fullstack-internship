@@ -1,0 +1,64 @@
+name: MiniLedger CI Pipeline
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  test-and-build:
+    name: Test & Build (API + Mobile)
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: miniledger_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Generate Prisma Client
+        run: npm run db:generate
+
+      - name: Apply Database Migrations (Test DB)
+        env:
+          DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/miniledger_test?schema=public"
+        run: npx prisma migrate deploy --schema=apps/api/prisma/schema.prisma
+
+      - name: Run TypeScript Type Checks
+        run: npm run typecheck
+
+      - name: Run Backend Automated Tests
+        env:
+          NODE_ENV: test
+          DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/miniledger_test?schema=public"
+          JWT_SECRET: test-super-secret-jwt-key-miniledger-ci-pipeline-32bytes
+        run: npm run test
+
+      - name: Build API Bundle
+        run: npm run build:api
+
+      - name: Export Mobile Web Bundle
+        run: npm run build:mobile

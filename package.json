@@ -1,0 +1,45 @@
+{
+  "name": "miniledger-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "MiniLedger — Money Lent to Friends Tracker (Full-Stack Monorepo)",
+  "workspaces": [
+    "apps/api",
+    "apps/mobile"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace=apps/api",
+    "dev:all": "concurrently \"npm run dev --workspace=apps/api\" \"npm run dev --workspace=apps/mobile\"",
+    "dev:api": "npm run dev --workspace=apps/api",
+    "dev:mobile": "npm run dev --workspace=apps/mobile",
+    "build": "npm run build --workspace=apps/api",
+    "build:api": "npm run build --workspace=apps/api",
+    "build:mobile": "npm run build --workspace=apps/mobile",
+    "test": "npm run test --workspace=apps/api",
+    "test:api": "npm run test --workspace=apps/api",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present",
+    "db:up": "docker compose up -d postgres",
+    "db:down": "docker compose down",
+    "db:migrate": "npm run prisma:migrate --workspace=apps/api",
+    "db:generate": "npm run prisma:generate --workspace=apps/api",
+    "db:seed": "npm run seed --workspace=apps/api"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "embedded-postgres": "^18.4.0-beta.17"
+  },
+  "keywords": [
+    "miniledger",
+    "fintech",
+    "loan-tracker",
+    "react-native",
+    "expo",
+    "express",
+    "prisma",
+    "postgresql",
+    "typescript"
+  ],
+  "author": "MiniLedger Team",
+  "license": "MIT"
+}
