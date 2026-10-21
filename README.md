@@ -98,7 +98,8 @@ miniledger/
 │   ├── miniledger-demo.webp              # WebP session recording
 │   ├── DEMO_SCRIPT.md                    # Walkthrough timeline & script
 │   └── SUBMISSION_STATUS.md              # Definitive submission report
-├── .github/workflows/ci.yml              # CI test & build pipeline
+├── ci/
+│   └── ci.yml                            # GitHub Actions CI workflow (ready to deploy)
 ├── docker-compose.yml                    # Docker Compose PostgreSQL service
 ├── package.json                          # Monorepo workspaces manifest
 └── .env.example                          # Environment template
